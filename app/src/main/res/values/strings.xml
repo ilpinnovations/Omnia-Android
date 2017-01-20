@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Omnia</string>
+
+    <string name="shared_prefs">Network</string>
+    <string name="ip_address">IP Address</string>
+    <string name="port">Port</string>
+
+    <string name="title_activity_splash">SplashActivity</string>
+    <string name="primary_btn">Primary</string>
+    <string name="secondary_btn">Secondary</string>
+    <string name="app_name_splash">Ambulance\nDispatch\nSystem</string>
+</resources>
