@@ -57,23 +57,23 @@ public class MainActivity extends AppCompatActivity {
                 // Pressed
                 switch (view.getId()){
                     case R.id.button_up:
-                        message = "press_up";
+                        message = "1";
                         break;
 
                     case R.id.button_down:
-                        message = "press_down";
+                        message = "2";
                         break;
 
                     case R.id.button_left:
-                        message = "press_left";
+                        message = "3";
                         break;
 
                     case R.id.button_right:
-                        message = "press_right";
+                        message = "4";
                         break;
 
                     case R.id.button_center:
-                        message = "press_center";
+                        message = "5";
                         break;
                 }
 
@@ -84,23 +84,23 @@ public class MainActivity extends AppCompatActivity {
 
                 switch (view.getId()){
                     case R.id.button_up:
-                        message = "release_up";
+                        message = "6";
                         break;
 
                     case R.id.button_down:
-                        message = "release_down";
+                        message = "7";
                         break;
 
                     case R.id.button_left:
-                        message = "release_left";
+                        message = "8";
                         break;
 
                     case R.id.button_right:
-                        message = "release_right";
+                        message = "9";
                         break;
 
                     case R.id.button_center:
-                        message = "release_center";
+                        message = "0";
                         break;
                 }
 
@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
 
         SharedPreferences sharedPref = getApplicationContext().getSharedPreferences(getApplicationContext().getString(R.string.shared_prefs), Context.MODE_PRIVATE);
         String ip = sharedPref.getString(getApplicationContext().getString(R.string.ip_address), "");
-        url = "https://" + ip + ":8080";
+        url = "https://" + ip + ":8080/";
 
         webView = (WebView) findViewById(R.id.web_view);
         webView.setWebViewClient(new MyBrowser());
