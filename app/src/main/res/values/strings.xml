@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Omnia</string>
+    <string name="app_name">Omnia-Controller</string>
 
     <string name="shared_prefs">Network</string>
     <string name="ip_address">IP Address</string>

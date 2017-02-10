@@ -1,0 +1,41 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/colorPrimary"
+    tools:context="com.tcs.innovations.omnia.controller.SplashScreen"
+    android:padding="30dp"
+    android:id="@+id/container">
+
+    <!-- The primary full-screen view. This can be replaced with whatever view
+         is needed to present your content, e.g. VideoView, SurfaceView,
+         TextureView, etc. -->
+    <TextView
+        android:id="@+id/fullscreen_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:keepScreenOn="true"
+        android:text="Omnia Controller"
+        android:textColor="@color/colorAccent"
+        android:textSize="50sp"
+        android:textStyle="bold" />
+
+
+    <com.github.jorgecastillo.FillableLoader
+        android:id="@+id/fillableLoader"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        app:fl_fillColor="#ECBA16"
+        app:fl_strokeColor="@android:color/white"
+        app:fl_originalWidth="512"
+        app:fl_originalHeight="512"
+        app:fl_strokeDrawingDuration="1500"
+        app:fl_fillDuration="4000"
+        app:fl_clippingTransform="waves"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        app:fl_fillPercentage="100"/>
+
+</RelativeLayout>

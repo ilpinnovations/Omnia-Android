@@ -5,7 +5,7 @@ android {
     buildToolsVersion "24.0.3"
 
     defaultConfig {
-        applicationId "com.tcs.innovations.omnia"
+        applicationId "com.tcs.innovations.omnia.controller"
         minSdkVersion 15
         targetSdkVersion 24
         versionCode 1
@@ -33,4 +33,13 @@ dependencies {
     // MQTT PAHO
     compile 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.1.0'
     compile 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.0'
+
+    // zxing qr-code scanner
+    compile 'me.dm7.barcodescanner:zbar:1.9'
+
+    // seekbar
+    compile 'org.adw.library:discrete-seekbar:1.0.1'
+
+    // Android Fillable Loader
+    compile 'com.github.jorgecastilloprz:fillableloaders:1.03@aar'
 }

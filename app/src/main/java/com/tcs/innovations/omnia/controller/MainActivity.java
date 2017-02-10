@@ -1,4 +1,4 @@
-package com.tcs.innovations.omnia;
+package com.tcs.innovations.omnia.controller;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -7,6 +7,7 @@ import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.PermissionRequest;
@@ -14,25 +15,29 @@ import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.ImageView;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
-import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import java.io.UnsupportedEncodingException;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements DiscreteSeekBar.OnProgressChangeListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private String clientId = "OmniaAndroid";
-    private String topic = "MQTT/OMNIA";
+    private String clientId = "omnia_controller";
+
+    private String topic_control = "omnia/control";
+    private String topic_text = "omnia/text";
+    private String topic_expression = "omnia/expression";
+
     private int qos = 2;
     private String broker = "";
     private String url = "";
@@ -45,8 +50,50 @@ public class MainActivity extends AppCompatActivity {
     private ImageView btnRight;
     private ImageView btnDown;
 
+    private EditText mEditText;
+    private ImageView sendButton;
+    private DiscreteSeekBar throttle;
     private WebView webView;
 
+    private ImageView.OnClickListener sendListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            String data = mEditText.getText().toString();
+
+            if (!data.equalsIgnoreCase("")){
+                publishMessage(data, topic_text);
+            }
+
+            mEditText.setText("");
+
+        }
+    };
+
+    private EditText.OnKeyListener keyListener = new View.OnKeyListener() {
+        @Override
+        public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+            // If the event is a key-down event on the "enter" button
+            if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
+                    (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                // Perform action on key press
+
+                EditText editText = (EditText) v;
+
+                if(v == mEditText)
+                {
+                    String data = editText.getText().toString();
+                    publishMessage(data, topic_text);
+                }
+
+                mEditText.setText("");
+
+                return true;
+            }
+            return false;
+
+        }
+    };
 
     private View.OnTouchListener touchListener = new View.OnTouchListener() {
         @Override
@@ -57,55 +104,54 @@ public class MainActivity extends AppCompatActivity {
                 // Pressed
                 switch (view.getId()){
                     case R.id.button_up:
-                        message = "1";
+                        message = "forward_press*";
                         break;
 
                     case R.id.button_down:
-                        message = "2";
+                        message = "reverse_press*";
                         break;
 
                     case R.id.button_left:
-                        message = "3";
+                        message = "left_press*";
                         break;
 
                     case R.id.button_right:
-                        message = "4";
+                        message = "right_press*";
                         break;
 
                     case R.id.button_center:
-                        message = "5";
+                        message = "center_press*";
                         break;
                 }
-
-                publishMessage(message);
 
             } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
                 // Released
 
                 switch (view.getId()){
                     case R.id.button_up:
-                        message = "6";
+                        message = "forward_release*";
                         break;
 
                     case R.id.button_down:
-                        message = "7";
+                        message = "reverse_release*";
                         break;
 
                     case R.id.button_left:
-                        message = "8";
+                        message = "left_release*";
                         break;
 
                     case R.id.button_right:
-                        message = "9";
+                        message = "right_release*";
                         break;
 
                     case R.id.button_center:
-                        message = "0";
+                        message = "center_release*";
                         break;
                 }
-
-                publishMessage(message);
             }
+
+            publishMessage(message, topic_control);
+
             return true;
         }
     };
@@ -114,6 +160,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mEditText = (EditText) findViewById(R.id.chat_edit_text);
+        sendButton = (ImageView) findViewById(R.id.send_image);
+        sendButton.setOnClickListener(sendListener);
+        sendButton.setOnKeyListener(keyListener);
+
+        throttle = (DiscreteSeekBar) findViewById(R.id.throttle);
+        throttle.setOnProgressChangeListener(this);
 
         btnUp = (ImageView)findViewById(R.id.button_up);
         btnLeft = (ImageView)findViewById(R.id.button_left);
@@ -193,7 +247,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void publishMessage(String payload){
+    private void publishMessage(String payload, String topic){
         byte[] encodedPayload = new byte[0];
         try {
             encodedPayload = payload.getBytes("UTF-8");
@@ -203,6 +257,23 @@ public class MainActivity extends AppCompatActivity {
         } catch (UnsupportedEncodingException | MqttException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void onProgressChanged(DiscreteSeekBar seekBar, int value, boolean fromUser) {
+        String message = "pwm" + value + "*";
+        Log.i(TAG, message);
+        publishMessage(message, topic_control);
+    }
+
+    @Override
+    public void onStartTrackingTouch(DiscreteSeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(DiscreteSeekBar seekBar) {
+
     }
 
     private class MyBrowser extends WebViewClient {
